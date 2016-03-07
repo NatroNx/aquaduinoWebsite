@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+    
+
+	
+    <head>
+        <title>Aquaduino2</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+ <script src="lib/jquery-1.6.4.js"></script>
+ <script src="lib/jquery.mobile-1.1.0.js"></script>
+ <link href="src/css/jquery.mobile.structure-1.1.0.css" rel="stylesheet"
+        />
+  <link href="src/css/jquery.mobile.theme-1.1.0.css" rel="stylesheet" />
+
+    </head>
+    
+    <body>
+
+    
+	
+	
+	<script language="javascript" type="text/javascript">
+
+var items=[
+["tE", 8],  //0
+["pH", 9],
+['tV', 0],
+['cI', 0],
+['mO', 0],
+['mM', 0],  //5
+['cP', 123],
+['cR', 87],
+["cG", 8],
+["cB", 9],
+['p1', 0],  //10
+['p2', 0],
+["lV", 0],
+['l1', 0],
+['l2', 0],
+['cO', 0], //15
+["hV", 0],
+['d1', 0],
+['d2', 0],
+['d3', 0],
+['cV', 0],  //20
+
+
+]
+
+$(function() {
+   
+   
+   
+    $('#'+items[2][0]).change(function(){ items[2][1]=1-items[2][1]; updateBool(items[2][0],items[2][1]) }); 
+    $('#'+items[3][0]).change(function(){ items[3][1]=1-items[3][1]; updateBool(items[3][0],items[3][1]) }); 
+   $('#'+items[4][0]).change(function(){ items[4][1]=1-items[4][1]; updateBool(items[4][0],items[4][1]) });  
+    $('#'+items[5][0]).change(function(){ items[5][1]=1-items[5][1]; updateBool(items[5][0],items[5][1]) }); 
+   $('#'+items[10][0]).change(function(){ items[10][1]=1-items[10][1]; updatePump(items[10][0],items[10][1]) }); 
+    $('#'+items[11][0]).change(function(){ items[11][1]=1-items[11][1]; updatePump(items[11][0],items[11][1]) }); 
+    $('#'+items[12][0]).change(function(){ items[12][1]=1-items[12][1]; updateRF(items[12][0],items[12][1]) }); 
+    $('#'+items[13][0]).change(function(){ items[13][1]=1-items[13][1]; updateRelais(items[13][0],items[13][1]) });  
+    $('#'+items[15][0]).change(function(){ items[15][1]=1-items[15][1]; updateRF(items[15][0],items[15][1]) }); 
+    $('#'+items[16][0]).change(function(){ items[16][1]=1-items[16][1]; updateRF(items[16][0],items[16][1]) }); 
+    $('#'+items[20][0]).change(function(){ items[20][1]=1-items[20][1]; updateRF(items[20][0],items[20][1]) }); 
+
+
+
+});
+
+
+
+  function init()
+  {
+	document.myform.url.value = "wss://pi.grojer.co.at/ws/"
+	//document.myform.url.value = "ws://10.0.0.200:9000"
+	document.myform.inputtext.value = "toMega|tV_0|cI_0|mO_0|mM_0|cP_11.1|cR_22.2|cG_33.3|cB_44.4|p1_1|p2_1|lV_0|l1_0|l2_0|cO_0|hV_1|d1_0|d2_0|d3_0|cV_0|"
+	document.myform.disconnectButton.disabled = true;
+	doConnect();
+  }
+
+  function doConnect()
+  {
+    websocket = new WebSocket(document.myform.url.value, ['arduino']);
+    websocket.onopen = function(evt) { onOpen(evt) };
+    websocket.onclose = function(evt) { onClose(evt) };
+    websocket.onmessage = function(evt) { onMessage(evt) };
+    websocket.onerror = function(evt) { onError(evt) };
+  }
+
+  function onOpen(evt)
+  {
+    writeToScreen("connected\n");
+	document.myform.connectButton.disabled = true;
+	document.myform.disconnectButton.disabled = false;
+        GetData();
+  }
+
+  function onClose(evt)
+  {  writeToScreen("disconnected - reconnecting in 1 second \n");
+    setTimeout(doConnect, 1000)
+
+  }
+
+  function onMessage(evt)
+  {	writeToScreen("debg: " + evt.data + '\n');
+
+if(evt.data.startsWith("parse|")) {parseData(evt.data) }
+  else {   writeToScreen("response: " + evt.data + '\n');}
+
+
+	
+
+  }
+
+  function onError(evt)
+  {
+    writeToScreen('error: ' + evt.data + '\n');
+
+	websocket.close();
+
+	document.myform.connectButton.disabled = false;
+	document.myform.disconnectButton.disabled = true;
+
+  }
+
+  function doSend(message)
+  {
+    writeToScreen("sent: " + message + '\n'); 
+    websocket.send(message);
+  }
+  
+    function viewAllData()
+  {
+   doSend("viewAllData");
+  }
+  
+function GetData()
+  {
+   doSend("GetData");
+  }
+  
+  
+
+  function writeToScreen(message)
+  {
+    document.myform.outputtext.value += message
+	document.myform.outputtext.scrollTop = document.myform.outputtext.scrollHeight;
+
+  }
+
+  window.addEventListener("load", init, false);
+
+
+   function sendText() {
+		doSend( document.myform.inputtext.value );
+   }
+
+  function clearText() {
+		document.myform.outputtext.value = "";
+   }
+
+   function doDisconnect() {
+		websocket.close();
+   }
+
+   
+   function parseData(data) 
+   {
+
+
+   var res = data.split("|");
+   		for(var i=0;i<3;i++)
+	{	for (var x=0; x<3; x++)
+		{	
+			if(res[i].startsWith(items[x][0]))	
+			{var tE=res[i].split("_");  items[x][1]=tE[1]; document.getElementById(items[x][0]).innerHTML = items[x][1];
+				
+			}
+		}
+	}
+	
+	
+	for(var i=2;i<22;i++)
+	{	for (var x=2; x<21; x++)
+		{	
+			if(res[i].startsWith(items[x][0]))	
+			{var tE=res[i].split("_");  items[x][1]=tE[1]; $("#"+items[x][0]).val(items[x][1]).slider('refresh');
+
+				
+			}
+		}
+	}
+
+
+
+}
+	
+
+	function updatePump(slidername, newValue)
+			{
+					
+					doSend("toMega|"+slidername+"_"+newValue+"|pP");
+			}	
+			
+			
+			
+	function updateBool(slidername, newValue)
+			{
+					
+					doSend("toMega|"+slidername+"_"+newValue+"|pB");
+			}	
+
+
+			
+	function updateSliders(slidername, newValue)
+			{
+			doSend("toMega|"+slidername+"_"+newValue+"|pS");
+			}	
+
+			
+				function updateRelais(slidername, newValue)
+			{
+				
+					doSend("toMega|"+slidername+"_"+newValue+"|pR");
+			
+			}
+			
+			
+				function updateRF(slidername, newValue)
+			{
+					
+					doSend("toMega|"+slidername+"_"+newValue+"|pF");
+			}
+			
+			
+
+
+
+
+</script>
+
+
+
+
+
+        <div data-role="page" id="page1">
+            <div data-role="content">
+			
+<input type="button" name=DataButton value="Update" onClick="GetData();">
+
+                <div class="ui-grid-c">
+                    <div class="ui-block-a">
+                        <h3>pH:</h3>
+                    </div>
+                    <div class="ui-block-b"><h3><p id="pH"></p></h3></div>
+                    <div class="ui-block-c">
+                        <h3>Temp:</h3>
+                    </div>
+                    <div class="ui-block-d"><h3><p id="tE"></p></h3></div>
+                </div>
+                <div class="ui-grid-a">
+                    <div class="ui-block-a">
+                        <h4>manual Override</h4>
+                    </div>
+                    <div class="ui-block-b">
+                        <select data-role="slider" id="mO">
+                            <option value="0">Off</option>
+                            <option value="1">On</option>
+							
+                        </select>
+                    </div>
+                    <div class="ui-block-a">
+                        <h4>TV Mode</h4>
+                    </div>
+                    <div class="ui-block-b">
+                        <select data-role="slider" id="tV">
+                            <option value="0">Off</option>
+                            <option value="1">On</option>
+                        </select>
+                    </div>
+                    <div class="ui-block-a">
+                        <h4>Moonlight</h4>
+                    </div>
+                    <div class="ui-block-b">
+                        <select data-role="slider" id="mM">
+                            <option value="0">Off</option>
+                            <option value="1">On</option>
+                        </select>
+                    </div>
+                    <div class="ui-block-a">
+                        <h4>Cleaning</h4>
+                    </div>
+                    <div class="ui-block-b">
+                        <select data-role="slider" id="cI">
+                            <option value="0">Off</option>
+                            <option value="1">On</option>
+                        </select>
+                    </div>
+                    <div class="ui-block-a">
+                        <h4>Pumpe 1</h4>
+                    </div>
+                    <div class="ui-block-b">
+                        <select data-role="slider" id="p1">
+                            <option value="1">Off</option>
+                            <option value="0">On</option>
+                        </select>
+                    </div>
+                    <div class="ui-block-a">
+                        <h4>Pumpe 2</h4>
+                    </div>
+                    <div class="ui-block-b">
+                        <select data-role="slider" id="p2">
+                            <option value="1">Off</option>
+                            <option value="0">On</option>
+                        </select>
+                    </div>
+                    <div class="ui-block-a">
+                        <h4>Hauptlicht</h4>
+                    </div>
+                    <div class="ui-block-b">
+                        <select data-role="slider" id="lV">
+                            <option value="1">Off</option>
+                            <option value="0">On</option>
+                        </select>
+                    </div>
+                    <div class="ui-block-a">
+                        <h4>Licht Abdeckung</h4>
+                    </div>
+                    <div class="ui-block-b">
+                        <select data-role="slider" id="l1">
+                            <option value="1">Off</option>
+                            <option value="0">On</option>
+                        </select>
+                    </div>
+                   
+                    <div class="ui-block-a">
+                        <h4>CO2</h4>
+                    </div>
+                    <div class="ui-block-b">
+                        <select data-role="slider" id="cO">
+                            <option value="1">Off</option>
+                            <option value="0">On</option>
+                        </select>
+                    </div>
+                    <div class="ui-block-a">
+                        <h4>Heizung</h4>
+                    </div>
+                    <div class="ui-block-b">
+                        <select data-role="slider" id="hV">
+                            <option value="1">Off</option>
+                            <option value="0">On</option>
+                        </select>
+                    </div>
+                    <div class="ui-block-a">
+                        <h4>LED Kuehlung</h4>
+                    </div>
+                    <div class="ui-block-b">
+                        <select data-role="slider" id="cV">
+                            <option value="1">Off</option>
+                            <option value="0">On</option>
+                        </select>
+
+
+                    </div>
+                </div>
+
+
+
+                <div data-role="fieldcontain" id="cPSlide">
+                    <label for="cP-range">WHITE&nbsp;&nbsp;&nbsp;</label>
+                    <input type="range" id="cP" step="5" value=0  data-highlight="true" min="0" max="255"  oninput="updateSliders(this.id, this.value)" onchange="updateSliders(this.id, this.value)"
+					/>
+                </div>
+
+
+
+
+
+
+
+
+                <div data-role="fieldcontain" id="cRSlide">
+                    <label for="cR-range">RED &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;</label>
+                    <input type="range" id="cR" step="5" value=0  data-highlight="true"  min="0" max="255"  oninput="updateSliders(this.id, this.value)" onchange="updateSliders(this.id, this.value)"
+                    />
+                </div>
+                <div data-role="fieldcontain" id="cGSlide">
+                    <label for="cG-range">GREEN &nbsp;</label>
+                    <input type="range" id="cG" step="5" value=0  data-highlight="true" min="0" max="255"  oninput="updateSliders(this.id, this.value)" onchange="updateSliders(this.id, this.value)"
+                    />
+                </div>
+                <div data-role="fieldcontain" id="cBSlide">
+                    <label for="cB-range">BLUE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                    <input type="range" id="cB" step="5" value=0  data-highlight="true"  min="0" max="255"  oninput="updateSliders(this.id, this.value)" onchange="updateSliders(this.id, this.value)"
+                    />
+                </div>
+
+
+
+
+
+
+
+
+
+
+
+
+            </div>
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+
+			
+			<form name="myform">
+<p>
+<textarea name="outputtext" rows="30" cols="70"></textarea>
+</p>
+<p>
+<textarea name="inputtext" rows="5" cols="70"></textarea>
+</p>
+<p>
+<textarea name="url" cols="50"></textarea>
+</p>
+<p>
+<input type="button" name=sendButton value="Send" onClick="sendText();">
+<input type="button" name=clearButton value="Clear" onClick="clearText();">
+<input type="button" name=disconnectButton value="Disconnect" onClick="doDisconnect();">
+<input type="button" name=connectButton value="Connect" onClick="doConnect();">
+<input type="button" name=DataButton value="GetData" onClick="GetData();">
+<input type="button" name=RefreshButton value="viewAllData" onClick="viewAllData();">
+<input type="button" name=parseButton value="parseData" onClick="parseData();">
+
+</p>
+
+
+</form>
+  </div>
+
+
+     
+    </body>
+
+</html>
+	
