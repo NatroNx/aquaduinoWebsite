@@ -7,17 +7,17 @@
     <head>
         <title>Aquaduino2</title>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-	
-	<script language="javascript" type="text/javascript"></script>
+
+		
 
 
 
 
-
- <script src="lib/jquery-1.6.4.js"></script>
- <script src="lib/jquery.mobile-1.1.0.js"></script>
- <link href="src/css/jquery.mobile.structure-1.1.0.css" rel="stylesheet" />
-  <link href="src/css/jquery.mobile.theme-1.1.0.css" rel="stylesheet" />
+ <script src="lib/jquery-1.12.1.js"></script>
+ <script language="javascript" type="text/javascript"></script>
+ <script src="lib/jquery.mobile-1.4.5.js"></script>
+ <link href="src/css/jquery.mobile.structure-1.4.5.css" rel="stylesheet" />
+  <link href="src/css/jquery.mobile.theme-1.4.5.css" rel="stylesheet" />
 
    
 
@@ -27,6 +27,7 @@
 	
 	
 <script>
+
 
 var items=[
 ["tE", 8],  //0
@@ -55,8 +56,15 @@ var items=[
 
 
 
-$(function() {
+
   
+
+
+
+
+
+$(document).on("pageinit","#pageone",function(){
+
 
 for (var z=0; z<22; z++)
 {$('#'+items[z][0]).unbind('change');
@@ -65,10 +73,10 @@ for (var z=0; z<22; z++)
     
     $('#'+items[2][0]).change(function(){ items[2][1]=1-items[2][1]; updateBool(items[2][0],items[2][1]) }); 
     $('#'+items[3][0]).change(function(){ items[3][1]=1-items[3][1]; updateBool(items[3][0],items[3][1]) }); 	
-   $('#'+items[4][0]).change(function(){ items[4][1]=1-items[4][1]; updateBool(items[4][0],items[4][1]) });     
+    $('#'+items[4][0]).change(function(){ items[4][1]=1-items[4][1]; updateBool(items[4][0],items[4][1]) });     
     $('#'+items[5][0]).change(function(){ items[5][1]=1-items[5][1]; updateBool(items[5][0],items[5][1]) }); 
 
-   $('#'+items[10][0]).change(function(){ items[10][1]=1-items[10][1]; updatePump(items[10][0],items[10][1]) }); 
+    $('#'+items[10][0]).change(function(){ items[10][1]=1-items[10][1]; updatePump(items[10][0],items[10][1]) }); 
     $('#'+items[11][0]).change(function(){ items[11][1]=1-items[11][1]; updatePump(items[11][0],items[11][1]) }); 
     $('#'+items[12][0]).change(function(){ items[12][1]=1-items[12][1]; updateRF(items[12][0],items[12][1]) }); 
     $('#'+items[13][0]).change(function(){ items[13][1]=1-items[13][1]; updateRelais(items[13][0],items[13][1]) });  
@@ -77,18 +85,56 @@ for (var z=0; z<22; z++)
   
     $('#'+items[20][0]).change(function(){ items[20][1]=1-items[20][1]; updateRF(items[20][0],items[20][1]) }); 
 
+	
 
-   /* $('#'+items[6][0]).mousemove( function(e){
-        $('#'+items[6][0]).html($(this).val());
-		updateSliders(items[6][0], items[6][1]);
-    });
 
-    $('#'+items[6][0]).change( function(e){
-        $('#'+items[6][0]).html($(this).val());
-		updateSliders(items[6][0], items[6][1]);
-    });
 
- */
+
+	
+
+	   $("#cPSlide").on("mouseup", function() { 
+        updateSliderFeedback("cP",$("#cP").val())
+      });
+	
+		   $("#cPSlide").on("change", function() { 
+        updateSlider("nP",$("#cP").val())
+      });
+
+	  
+	  
+	  	   $("#cRSlide").on("mouseup", function() { 
+        updateSliderFeedback("cR",$("#cR").val())
+      });
+	
+		   $("#cRSlide").on("change", function() { 
+        updateSlider("nR",$("#cR").val())
+      });
+
+	  
+	  
+	  
+	   $("#cGSlide").on("mouseup", function() { 
+        updateSliderFeedback("cG",$("#cG").val())
+      });
+	
+		   $("#cGSlide").on("change", function() { 
+        updateSlider("nG",$("#cG").val())
+      });
+
+	  
+	   $("#cBSlide").on("mouseup", function() { 
+        updateSliderFeedback("cB",$("#cB").val())
+      });
+	
+		   $("#cBSlide").on("change", function() { 
+        updateSlider("nB",$("#cB").val())
+      });
+
+	  
+  
+
+ 
+
 
 
 
@@ -100,13 +146,13 @@ for (var z=0; z<22; z++)
 
 
 
+
   function init()
   {
 	document.myform.url.value = "wss://pi.grojer.co.at/ws/"  
-	// http://jsfiddle.net/2CD7r/5/
 	//document.myform.url.value = "ws://10.0.0.200:9000"
 	document.myform.inputtext.value = "toMega|"
-	document.myform.disconnectButton.disabled = true;
+	//document.myform.disconnectButton.disabled = true;
 	doConnect();
 
 
@@ -129,8 +175,8 @@ for (var z=0; z<22; z++)
   function onOpen(evt)
   {
     writeToScreen("connected\n");
-	document.myform.connectButton.disabled = true;
-	document.myform.disconnectButton.disabled = false;
+	//document.myform.connectButton.disabled = true;
+	//document.myform.disconnectButton.disabled = false;
         GetData();
   }
 
@@ -163,8 +209,8 @@ writeToScreen("response: " + evt.data + '\n');
 
 	websocket.close();
 
-	document.myform.connectButton.disabled = false;
-	document.myform.disconnectButton.disabled = true;
+	//document.myform.connectButton.disabled = false;
+	//document.myform.disconnectButton.disabled = true;
 
   }
 
@@ -181,7 +227,6 @@ writeToScreen("response: " + evt.data + '\n');
   
 function GetData()
   {
-  doSend("toESP|nO");
    doSend("GetData");
   }
   
@@ -236,7 +281,7 @@ function GetData()
 					document.getElementById("nO").innerHTML = formattedTime;
 					}
 					else
-					{$("#"+items[x][0]).val(items[x][1]).slider('refresh');
+					{  $("#"+items[x][0]).val(items[x][1]).slider('refresh');
 					}
 				
 				}
@@ -276,11 +321,18 @@ function GetData()
 
 
 			
-	function updateSliders(slidername, newValue)
+	function updateSlider(slidername, newValue)
 			{
 			doSend("toMega|"+slidername+"_"+newValue+"|pS");
 			}	
 
+			
+  function updateSliderFeedback(slidername, newValue)
+			{
+			doSend("toMega|"+slidername+"_"+newValue+"|pS");
+			}
+			
+			
 			
 				function updateRelais(slidername, newValue)
 			{
@@ -308,10 +360,11 @@ function GetData()
 
     <body>
 
-<div id=main_page>
 
+ 
 
-
+<div data-role="page" id="pageone">
+ 
 			
 <input type="button" name=DataButton value="Update" onClick="GetData();">
 <div style="display:block; text-align:right;"><p id="nO">Time</p></div>
@@ -435,16 +488,16 @@ function GetData()
 
 
 
-                <div data-role="fieldcontain" id="cPSlide">
+
+              <div data-role="fieldcontain" id="cPSlide">
                     <label for="cP-range">WHITE&nbsp;&nbsp;&nbsp;</label>
-                    <input type="range" id="cP" step="5" value=0  data-highlight="true" min="0" max="255" 
-					/>
+                    <input type="range" id="cP" step="5" value=0  data-highlight="true" min="0" max="255" />
                 </div>
 
 
+  
 
-
-<!-- oninput="updateSliders(this.id, this.value)" onchange="updateSliders(this.id, this.value)" -->
+<!--    oninput="updateSliders(this.id, this.value)" onchange="updateSliders(this.id, this.value)" -->
 
 
 
@@ -463,17 +516,6 @@ function GetData()
                     <input type="range" id="cB" step="5" value=0  data-highlight="true"  min="0" max="255"  
                     />
                 </div>
-
-
-
-
-
-</div>
-
-
-
-
-
 
 
 
@@ -510,19 +552,22 @@ function GetData()
 <p>
 <textarea name="url" cols="50"></textarea>
 </p>
+
 <p>
 <input type="button" name=sendButton value="Send" onClick="sendText();">
 <input type="button" name=clearButton value="Clear" onClick="clearText();">
-<input type="button" name=disconnectButton value="Disconnect" onClick="doDisconnect();">
-<input type="button" name=connectButton value="Connect" onClick="doConnect();">
-<input type="button" name=DataButton value="GetData" onClick="GetData();">
-<input type="button" name=RefreshButton value="viewAllData" onClick="viewAllData();"> 
-<input type="button" name=parseButton value="parseData" onClick="parseData();">
+
 
 </p>
 
 
 </form>
+
+
+</div>
+
+
+
 
 
 
