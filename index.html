@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
     
@@ -6,20 +7,26 @@
     <head>
         <title>Aquaduino2</title>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+	
+	<script language="javascript" type="text/javascript"></script>
+
+
+
+
+
  <script src="lib/jquery-1.6.4.js"></script>
  <script src="lib/jquery.mobile-1.1.0.js"></script>
- <link href="src/css/jquery.mobile.structure-1.1.0.css" rel="stylesheet"
-        />
+ <link href="src/css/jquery.mobile.structure-1.1.0.css" rel="stylesheet" />
   <link href="src/css/jquery.mobile.theme-1.1.0.css" rel="stylesheet" />
 
-    </head>
-    
-    <body>
+   
+
+
 
     
 	
 	
-	<script language="javascript" type="text/javascript">
+<script>
 
 var items=[
 ["tE", 8],  //0
@@ -42,25 +49,47 @@ var items=[
 ['d1', 0],
 ['d2', 0],
 ['d3', 0],
-['cV', 0],  //20
+['cV', 1],  //20
 ['nO', 0]
 ]
 
+
+
 $(function() {
-   
-   
-   
+  
+
+for (var z=0; z<22; z++)
+{$('#'+items[z][0]).unbind('change');
+}
+
+    
     $('#'+items[2][0]).change(function(){ items[2][1]=1-items[2][1]; updateBool(items[2][0],items[2][1]) }); 
-    $('#'+items[3][0]).change(function(){ items[3][1]=1-items[3][1]; updateBool(items[3][0],items[3][1]) }); 
-   $('#'+items[4][0]).change(function(){ items[4][1]=1-items[4][1]; updateBool(items[4][0],items[4][1]) });  
+    $('#'+items[3][0]).change(function(){ items[3][1]=1-items[3][1]; updateBool(items[3][0],items[3][1]) }); 	
+   $('#'+items[4][0]).change(function(){ items[4][1]=1-items[4][1]; updateBool(items[4][0],items[4][1]) });     
     $('#'+items[5][0]).change(function(){ items[5][1]=1-items[5][1]; updateBool(items[5][0],items[5][1]) }); 
+
    $('#'+items[10][0]).change(function(){ items[10][1]=1-items[10][1]; updatePump(items[10][0],items[10][1]) }); 
     $('#'+items[11][0]).change(function(){ items[11][1]=1-items[11][1]; updatePump(items[11][0],items[11][1]) }); 
     $('#'+items[12][0]).change(function(){ items[12][1]=1-items[12][1]; updateRF(items[12][0],items[12][1]) }); 
     $('#'+items[13][0]).change(function(){ items[13][1]=1-items[13][1]; updateRelais(items[13][0],items[13][1]) });  
     $('#'+items[15][0]).change(function(){ items[15][1]=1-items[15][1]; updateRF(items[15][0],items[15][1]) }); 
     $('#'+items[16][0]).change(function(){ items[16][1]=1-items[16][1]; updateRF(items[16][0],items[16][1]) }); 
+  
     $('#'+items[20][0]).change(function(){ items[20][1]=1-items[20][1]; updateRF(items[20][0],items[20][1]) }); 
+
+
+   /* $('#'+items[6][0]).mousemove( function(e){
+        $('#'+items[6][0]).html($(this).val());
+		updateSliders(items[6][0], items[6][1]);
+    });
+
+    $('#'+items[6][0]).change( function(e){
+        $('#'+items[6][0]).html($(this).val());
+		updateSliders(items[6][0], items[6][1]);
+    });
+
+ */
+
 
 
 
@@ -68,23 +97,34 @@ $(function() {
 
 
 
+
+
+
   function init()
   {
-	document.myform.url.value = "wss://pi.grojer.co.at/ws/"
+	document.myform.url.value = "wss://pi.grojer.co.at/ws/"  
+	// http://jsfiddle.net/2CD7r/5/
 	//document.myform.url.value = "ws://10.0.0.200:9000"
 	document.myform.inputtext.value = "toMega|"
 	document.myform.disconnectButton.disabled = true;
 	doConnect();
+
+
+	
   }
 
   function doConnect()
   {
     websocket = new WebSocket(document.myform.url.value, ['arduino']);
-    websocket.onopen = function(evt) { onOpen(evt) };
+  websocket.onopen = function(evt) { onOpen(evt) };
     websocket.onclose = function(evt) { onClose(evt) };
     websocket.onmessage = function(evt) { onMessage(evt) };
     websocket.onerror = function(evt) { onError(evt) };
+
   }
+
+
+
 
   function onOpen(evt)
   {
@@ -103,7 +143,7 @@ $(function() {
   function onMessage(evt)
   {	
 
-//writeToScreen("debg: " + evt.data + '\n');
+writeToScreen("debg: " + evt.data + '\n');
 
 if(evt.data.startsWith("parse|"))
  {parseData(evt.data)
@@ -130,7 +170,7 @@ writeToScreen("response: " + evt.data + '\n');
 
   function doSend(message)
   {
-    writeToScreen("sent: " + message + '\n'); 
+   writeToScreen("sent: " + message + '\n'); 
     websocket.send(message);
   }
   
@@ -141,6 +181,7 @@ writeToScreen("response: " + evt.data + '\n');
   
 function GetData()
   {
+  doSend("toESP|nO");
    doSend("GetData");
   }
   
@@ -171,36 +212,38 @@ function GetData()
    
    function parseData(data) 
    {
-
-
-   var res = data.split("|");
-   		for(var i=0;i<res.length;i++)
-	{	for(var x=0; x<22; x++)
-		{if(res[i].startsWith(items[x][0]))	
-			{var tE=res[i].split("_");  items[x][1]=tE[1]; 
-			if(x==0 || x == 1 || x == 2)
-			 {document.getElementById(items[x][0]).innerHTML = items[x][1];}
-			else if(x==21)
-			{
-
-var date = new Date(items[x][1] *1000);
-var hours = date.getUTCHours();
-var minutes = "0" + date.getMinutes();
-var seconds = "0" + date.getSeconds();
-var day = date.getDate();
-var month = date.getMonth()+1;
-var year = date.getFullYear();
-var formattedTime = day + '.' + month +'.' + year +"   " +hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2);
-document.getElementById("nO").innerHTML = formattedTime;
-
-
-			}
-			else
-			{$("#"+items[x][0]).val(items[x][1]).slider('refresh');
-			}
-			
+		var res = data.split("|");
+		for(var i=0;i<res.length;i++)
+		{for(var x=0; x<22; x++)
+			{if(res[i].startsWith(items[x][0]))	
+				{var tE=res[i].split("_");  
+				
+				 {
+				 items[x][1]=tE[1];
+					if(x==0 || x == 1)
+					{document.getElementById(items[x][0]).innerHTML = items[x][1];
+					}
+					else if(x==21)
+					{
+					var date = new Date(items[x][1] *1000);
+					var hours = date.getUTCHours();
+					var minutes = "0" + date.getMinutes();
+					var seconds = "0" + date.getSeconds();
+					var day = date.getUTCDate();
+					var month = date.getUTCMonth()+1;
+					var year = date.getFullYear();
+					var formattedTime = day + '.' + month +'.' + year +"   " +hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2);
+					document.getElementById("nO").innerHTML = formattedTime;
+					}
+					else
+					{$("#"+items[x][0]).val(items[x][1]).slider('refresh');
+					}
+				
+				}
+				
 			}
 		}
+		
 	}
 	
 	
@@ -259,6 +302,13 @@ document.getElementById("nO").innerHTML = formattedTime;
 
 
 </script>
+
+ </head>
+    
+
+    <body>
+
+<div id=main_page>
 
 
 
@@ -387,30 +437,30 @@ document.getElementById("nO").innerHTML = formattedTime;
 
                 <div data-role="fieldcontain" id="cPSlide">
                     <label for="cP-range">WHITE&nbsp;&nbsp;&nbsp;</label>
-                    <input type="range" id="cP" step="5" value=0  data-highlight="true" min="0" max="255"  oninput="updateSliders(this.id, this.value)" onchange="updateSliders(this.id, this.value)"
+                    <input type="range" id="cP" step="5" value=0  data-highlight="true" min="0" max="255" 
 					/>
                 </div>
 
 
 
 
-
+<!-- oninput="updateSliders(this.id, this.value)" onchange="updateSliders(this.id, this.value)" -->
 
 
 
                 <div data-role="fieldcontain" id="cRSlide">
                     <label for="cR-range">RED &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;</label>
-                    <input type="range" id="cR" step="5" value=0  data-highlight="true"  min="0" max="255"  oninput="updateSliders(this.id, this.value)" onchange="updateSliders(this.id, this.value)"
+                    <input type="range" id="cR" step="5" value=0  data-highlight="true"  min="0" max="255"     
                     />
                 </div>
                 <div data-role="fieldcontain" id="cGSlide">
                     <label for="cG-range">GREEN &nbsp;</label>
-                    <input type="range" id="cG" step="5" value=0  data-highlight="true" min="0" max="255"  oninput="updateSliders(this.id, this.value)" onchange="updateSliders(this.id, this.value)"
+                    <input type="range" id="cG" step="5" value=0  data-highlight="true" min="0" max="255"
                     />
                 </div>
                 <div data-role="fieldcontain" id="cBSlide">
                     <label for="cB-range">BLUE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
-                    <input type="range" id="cB" step="5" value=0  data-highlight="true"  min="0" max="255"  oninput="updateSliders(this.id, this.value)" onchange="updateSliders(this.id, this.value)"
+                    <input type="range" id="cB" step="5" value=0  data-highlight="true"  min="0" max="255"  
                     />
                 </div>
 
@@ -418,24 +468,7 @@ document.getElementById("nO").innerHTML = formattedTime;
 
 
 
-
-
-
-
-
-
-
-            </div>
-      
-
-
-
-
-
-
-
-
-
+</div>
 
 
 
@@ -483,14 +516,14 @@ document.getElementById("nO").innerHTML = formattedTime;
 <input type="button" name=disconnectButton value="Disconnect" onClick="doDisconnect();">
 <input type="button" name=connectButton value="Connect" onClick="doConnect();">
 <input type="button" name=DataButton value="GetData" onClick="GetData();">
-<input type="button" name=RefreshButton value="viewAllData" onClick="viewAllData();">
+<input type="button" name=RefreshButton value="viewAllData" onClick="viewAllData();"> 
 <input type="button" name=parseButton value="parseData" onClick="parseData();">
 
 </p>
 
 
 </form>
-  </div>
+
 
 
      
