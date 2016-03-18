@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
     
@@ -5,21 +6,37 @@
 	
     <head>
         <title>Aquaduino2</title>
+	<meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1" />
- <script src="lib/jquery-1.6.4.js"></script>
- <script src="lib/jquery.mobile-1.1.0.js"></script>
- <link href="src/css/jquery.mobile.structure-1.1.0.css" rel="stylesheet"
-        />
-  <link href="src/css/jquery.mobile.theme-1.1.0.css" rel="stylesheet" />
+	
 
-    </head>
-    
-    <body>
+
+
+
+
+	<link rel="stylesheet" href="themes/BlueGray.min.css" />
+	<link rel="stylesheet" href="themes/jquery.mobile.icons.min.css" />
+<link rel="stylesheet" href="src/css/jquery.mobile.structure-1.4.5.css" />
+
+ <script src="lib/jquery-1.12.1.js"></script>
+ <script language="javascript" type="text/javascript"></script>
+ <script src="lib/jquery.mobile-1.4.5.js"></script>
+
+
+
+   
+
+
+
+   
+
+
 
     
 	
 	
-	<script language="javascript" type="text/javascript">
+<script>
+
 
 var items=[
 ["tE", 8],  //0
@@ -34,7 +51,7 @@ var items=[
 ["cB", 9],
 ['p1', 0],  //10
 ['p2', 0],
-['lV', 0],
+["lV", 0],
 ['l1', 0],
 ['l2', 0],
 ['cO', 0], //15
@@ -42,26 +59,92 @@ var items=[
 ['d1', 0],
 ['d2', 0],
 ['d3', 0],
-['cV', 0],  //20
-
-
+['cV', 1],  //20
+['nO', 0]
 ]
 
-$(function() {
-   
-   
+
+
+
+  
+
+
+
+
+
+$(document).on("pageinit","#pageone",function(){
+
+
+for (var z=0; z<22; z++)
+{$('#'+items[z][0]).unbind('change');
+}
+
+    
     $('#'+items[2][0]).change(function(){ items[2][1]=1-items[2][1]; updateBool(items[2][0],items[2][1]) }); 
-    $('#'+items[3][0]).change(function(){ items[3][1]=1-items[3][1]; updateBool(items[3][0],items[3][1]) }); 
-   $('#'+items[4][0]).change(function(){ items[4][1]=1-items[4][1]; updateBool(items[4][0],items[4][1]) });  
+    $('#'+items[3][0]).change(function(){ items[3][1]=1-items[3][1]; updateBool(items[3][0],items[3][1]) }); 	
+    $('#'+items[4][0]).change(function(){ items[4][1]=1-items[4][1]; updateBool(items[4][0],items[4][1]) });     
     $('#'+items[5][0]).change(function(){ items[5][1]=1-items[5][1]; updateBool(items[5][0],items[5][1]) }); 
 
-   $('#'+items[10][0]).change(function(){ items[10][1]=1-items[10][1]; updatePump(items[10][0],items[10][1]) }); 
+    $('#'+items[10][0]).change(function(){ items[10][1]=1-items[10][1]; updatePump(items[10][0],items[10][1]) }); 
     $('#'+items[11][0]).change(function(){ items[11][1]=1-items[11][1]; updatePump(items[11][0],items[11][1]) }); 
     $('#'+items[12][0]).change(function(){ items[12][1]=1-items[12][1]; updateRF(items[12][0],items[12][1]) }); 
     $('#'+items[13][0]).change(function(){ items[13][1]=1-items[13][1]; updateRelais(items[13][0],items[13][1]) });  
     $('#'+items[15][0]).change(function(){ items[15][1]=1-items[15][1]; updateRF(items[15][0],items[15][1]) }); 
     $('#'+items[16][0]).change(function(){ items[16][1]=1-items[16][1]; updateRF(items[16][0],items[16][1]) }); 
+  
     $('#'+items[20][0]).change(function(){ items[20][1]=1-items[20][1]; updateRF(items[20][0],items[20][1]) }); 
+
+	
+
+
+
+
+	
+
+	   $("#cPSlide").on("mouseup", function() { 
+        updateSliderFeedback("cP",$("#cP").val())
+      });
+	
+		   $("#cPSlide").on("change", function() { 
+        updateSlider("nP",$("#cP").val())
+      });
+
+	  
+	  
+	  	   $("#cRSlide").on("mouseup", function() { 
+        updateSliderFeedback("cR",$("#cR").val())
+      });
+	
+		   $("#cRSlide").on("change", function() { 
+        updateSlider("nR",$("#cR").val())
+      });
+
+	  
+	  
+	  
+	   $("#cGSlide").on("mouseup", function() { 
+        updateSliderFeedback("cG",$("#cG").val())
+      });
+	
+		   $("#cGSlide").on("change", function() { 
+        updateSlider("nG",$("#cG").val())
+      });
+
+	  
+	   $("#cBSlide").on("mouseup", function() { 
+        updateSliderFeedback("cB",$("#cB").val())
+      });
+	
+		   $("#cBSlide").on("change", function() { 
+        updateSlider("nB",$("#cB").val())
+      });
+
+	  
+  
+
+ 
+
+
 
 
 
@@ -69,32 +152,41 @@ $(function() {
 
 
 
+
+
+
+
   function init()
   {
-	document.myform.url.value = "wss://pi.grojer.co.at/ws/"
-	//document.myform.url.value = "ws://10.0.0.200:9000"
-	document.myform.inputtext.value = "toMega|tV_0|cI_0|mO_0|mM_0|cP_11.1|cR_22.2|cG_33.3|cB_44.4|p1_1|p2_1|lV_0|l1_0|l2_0|cO_0|hV_1|d1_0|d2_0|d3_0|cV_0|"
-	document.myform.disconnectButton.disabled = true;
+	//document.myform.url.value = "wss://pi.grojer.co.at/ws/"  
+	document.myform.url.value = "ws://10.0.0.200:9000"
+	document.myform.inputtext.value = "toMega|"
+	//document.myform.disconnectButton.disabled = true;
 	doConnect();
+
+
+	
   }
 
   function doConnect()
   {
     websocket = new WebSocket(document.myform.url.value, ['arduino']);
-    websocket.onopen = function(evt) { onOpen(evt) };
+  websocket.onopen = function(evt) { onOpen(evt) };
     websocket.onclose = function(evt) { onClose(evt) };
     websocket.onmessage = function(evt) { onMessage(evt) };
     websocket.onerror = function(evt) { onError(evt) };
 
   }
 
+
+
+
   function onOpen(evt)
   {
     writeToScreen("connected\n");
-	document.myform.connectButton.disabled = true;
-	document.myform.disconnectButton.disabled = false;
- GetData();
-	
+	//document.myform.connectButton.disabled = true;
+	//document.myform.disconnectButton.disabled = false;
+        GetData();
   }
 
   function onClose(evt)
@@ -105,9 +197,15 @@ $(function() {
 
   function onMessage(evt)
   {	
-  writeToScreen("response: " + evt.data + '\n')
-  if(evt.data.startsWith("parse|")) {parseData(evt.data) }
-  else {   writeToScreen("response: " + evt.data + '\n');}
+
+writeToScreen("debg: " + evt.data + '\n');
+
+if(evt.data.startsWith("parse|"))
+ {parseData(evt.data)
+}
+  else {   
+writeToScreen("response: " + evt.data + '\n');
+}
 
 
 	
@@ -120,14 +218,14 @@ $(function() {
 
 	websocket.close();
 
-	document.myform.connectButton.disabled = false;
-	document.myform.disconnectButton.disabled = true;
+	//document.myform.connectButton.disabled = false;
+	//document.myform.disconnectButton.disabled = true;
 
   }
 
   function doSend(message)
   {
-    writeToScreen("sent: " + message + '\n'); 
+   writeToScreen("sent: " + message + '\n'); 
     websocket.send(message);
   }
   
@@ -139,7 +237,6 @@ $(function() {
 function GetData()
   {
    doSend("GetData");
-   doSend("viewAllData");
   }
   
   
@@ -169,30 +266,48 @@ function GetData()
    
    function parseData(data) 
    {
-
-
-   var res = data.split("|");
-   		for(var i=0;i<3;i++)
-	{	for (var x=0; x<3; x++)
-		{	
-			if(res[i].startsWith(items[x][0]))	
-			{var tE=res[i].split("_");  items[x][1]=tE[1]; document.getElementById(items[x][0]).innerHTML = items[x][1];
+		var res = data.split("|");
+		for(var i=0;i<res.length;i++)
+		{for(var x=0; x<22; x++)
+			{if(res[i].startsWith(items[x][0]))	
+				{var tE=res[i].split("_");  
+				
+				 {
+				 items[x][1]=tE[1];
+					if(x==0 || x == 1)
+					{document.getElementById(items[x][0]).innerHTML = items[x][1];
+					}
+					else if(x==21)
+					{
+					var date = new Date(items[x][1] *1000);
+					var hours = date.getUTCHours();
+					var minutes = "0" + date.getMinutes();
+					var seconds = "0" + date.getSeconds();
+					var day = date.getUTCDate();
+					var month = date.getUTCMonth()+1;
+					var year = date.getFullYear();
+					var formattedTime = day + '.' + month +'.' + year +"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" +hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2);
+					document.getElementById("nO").innerHTML = formattedTime;
+					}
+					else
+					{  $("#"+items[x][0]).val(items[x][1]).slider('refresh');
+					}
+				
+				}
 				
 			}
 		}
+		
 	}
 	
 	
-	for(var i=2;i<22;i++)
-	{	for (var x=2; x<21; x++)
-		{	
-			if(res[i].startsWith(items[x][0]))	
-			{var tE=res[i].split("_");  items[x][1]=tE[1]; $("#"+items[x][0]).val(items[x][1]).slider('refresh');
+	
+	
 
-				
-			}
-		}
-	}
+
+
+
+
 
 
 
@@ -215,12 +330,18 @@ function GetData()
 
 
 			
-	function updateSliders(slidername, newValue)
+	function updateSlider(slidername, newValue)
 			{
-					
-					doSend("toMega|"+slidername+"_"+newValue+"|pS");
+			doSend("toMega|"+slidername+"_"+newValue+"|pS");
 			}	
 
+			
+  function updateSliderFeedback(slidername, newValue)
+			{
+			doSend("toMega|"+slidername+"_"+newValue+"|pS");
+			}
+			
+			
 			
 				function updateRelais(slidername, newValue)
 			{
@@ -240,126 +361,153 @@ function GetData()
 
 
 
+
 </script>
 
+ </head>
+    
+
+    <body>
+
+<style>
+.ui-block-a, .ui-block-b, .ui-block-c, .ui-block-d {
+  
+    height: 40px;
+
+    text-align: center;
+
+}
+</style>
 
 
+ 
+
+<div data-role="page" id="pageone">
+ 
 
 
-        <div data-role="page" id="page1">
-            <div data-role="content">
-			
-<input type="button" name=DataButton value="Update" onClick="GetData();">
- <!--  <input type="button" name=RefreshButton value="viewAllData" onClick="viewAllData();"> -->
+ 
+<a data-role="button" onClick="GetData();" id="nO" data-icon="refresh" >
+  <span class="ui-btn-inner ui-btn-corner-all">
+    <span class="ui-btn-text">Mark Old</span>
+  </span>
+</a>
+
+
 
                 <div class="ui-grid-c">
                     <div class="ui-block-a">
-                        <h3>pH:</h3>
+                        <h4>pH:</h4>
                     </div>
                     <div class="ui-block-b"><h3><p id="pH"></p></h3></div>
                     <div class="ui-block-c">
-                        <h3>Temp:</h3>
+                        <h4>Temp:</h4>
                     </div>
                     <div class="ui-block-d"><h3><p id="tE"></p></h3></div>
                 </div>
+
+
+
+
+
                 <div class="ui-grid-a">
                     <div class="ui-block-a">
-                        <h4>manual Override</h4>
+                        <h5>manual Override</h5>
                     </div>
                     <div class="ui-block-b">
-                        <select data-role="slider" id="mO">
+                        <select data-role="slider" id="mO" data-mini="true">
                             <option value="0">Off</option>
                             <option value="1">On</option>
 							
                         </select>
                     </div>
                     <div class="ui-block-a">
-                        <h4>TV Mode</h4>
+                        <h5>TV Mode</h5>
                     </div>
                     <div class="ui-block-b">
-                        <select data-role="slider" id="tV">
+                        <select data-role="slider" id="tV" data-mini="true">
                             <option value="0">Off</option>
                             <option value="1">On</option>
                         </select>
                     </div>
                     <div class="ui-block-a">
-                        <h4>Moonlight</h4>
+                        <h5>Moonlight</h5>
                     </div>
                     <div class="ui-block-b">
-                        <select data-role="slider" id="mM">
+                        <select data-role="slider" id="mM" data-mini="true">
                             <option value="0">Off</option>
                             <option value="1">On</option>
                         </select>
                     </div>
                     <div class="ui-block-a">
-                        <h4>Cleaning</h4>
+                        <h5>Cleaning</h5>
                     </div>
                     <div class="ui-block-b">
-                        <select data-role="slider" id="cI">
+                        <select data-role="slider" id="cI" data-mini="true">
                             <option value="0">Off</option>
                             <option value="1">On</option>
                         </select>
                     </div>
                     <div class="ui-block-a">
-                        <h4>Pumpe 1</h4>
+                        <h5>Pumpe 1</h5>
                     </div>
                     <div class="ui-block-b">
-                        <select data-role="slider" id="p1">
+                        <select data-role="slider" id="p1" data-mini="true">
                             <option value="1">Off</option>
                             <option value="0">On</option>
                         </select>
                     </div>
                     <div class="ui-block-a">
-                        <h4>Pumpe 2</h4>
+                        <h5>Pumpe 2</h5>
                     </div>
                     <div class="ui-block-b">
-                        <select data-role="slider" id="p2">
+                        <select data-role="slider" id="p2" data-mini="true">
                             <option value="1">Off</option>
                             <option value="0">On</option>
                         </select>
                     </div>
                     <div class="ui-block-a">
-                        <h4>Hauptlicht</h4>
+                        <h5>Hauptlicht</h5>
                     </div>
                     <div class="ui-block-b">
-                        <select data-role="slider" id="lV">
+                        <select data-role="slider" id="lV" data-mini="true">
                             <option value="1">Off</option>
                             <option value="0">On</option>
                         </select>
                     </div>
                     <div class="ui-block-a">
-                        <h4>Licht Abdeckung</h4>
+                        <h5>Licht Abdeckung</h5>
                     </div>
                     <div class="ui-block-b">
-                        <select data-role="slider" id="l1">
+                        <select data-role="slider" id="l1" data-mini="true" >
                             <option value="1">Off</option>
                             <option value="0">On</option>
                         </select>
                     </div>
                    
                     <div class="ui-block-a">
-                        <h4>CO2</h4>
+                        <h5>CO2</h5>
                     </div>
                     <div class="ui-block-b">
-                        <select data-role="slider" id="cO">
+                        <select data-role="slider" id="cO" data-mini="true">
                             <option value="1">Off</option>
                             <option value="0">On</option>
                         </select>
                     </div>
                     <div class="ui-block-a">
-                        <h4>Heizung</h4>
+                        <h5>Heizung</h5>
                     </div>
                     <div class="ui-block-b">
-                        <select data-role="slider" id="hV">
+                        <select data-role="slider" id="hV" data-mini="true">
                             <option value="1">Off</option>
                             <option value="0">On</option>
                         </select>
                     </div>
                     <div class="ui-block-a">
-                        <h4>LED Kuehlung</h4>
+                        <h5>LED Kuehlung</h5>
                     </div>
                     <div class="ui-block-b">
-                        <select data-role="slider" id="cV">
+                        <select data-role="slider" id="cV" data-mini="true">
                             <option value="1">Off</option>
                             <option value="0">On</option>
                         </select>
@@ -370,62 +518,33 @@ function GetData()
 
 
 
-                <div data-role="fieldcontain" id="cPSlide">
+              <div data-role="fieldcontain" id="cPSlide" >
                     <label for="cP-range">WHITE&nbsp;&nbsp;&nbsp;</label>
-                    <input type="range" id="cP" step="5" value=0  data-highlight="true" min="0" max="255"  oninput="updateSliders(this.id, this.value)" onchange="updateSliders(this.id, this.value)"
-					/>
+                    <input type="range" id="cP" step="5" value=0  data-highlight="true" min="0" max="255" />
                 </div>
 
 
+  
 
-
-
+<!--    oninput="updateSliders(this.id, this.value)" onchange="updateSliders(this.id, this.value)" -->
 
 
 
                 <div data-role="fieldcontain" id="cRSlide">
                     <label for="cR-range">RED &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;</label>
-                    <input type="range" id="cR" step="5" value=0  data-highlight="true"  min="0" max="255"  oninput="updateSliders(this.id, this.value)" onchange="updateSliders(this.id, this.value)"
+                    <input type="range" id="cR" step="5" value=0  data-highlight="true"  min="0" max="255"     
                     />
                 </div>
                 <div data-role="fieldcontain" id="cGSlide">
                     <label for="cG-range">GREEN &nbsp;</label>
-                    <input type="range" id="cG" step="5" value=0  data-highlight="true" min="0" max="255"  oninput="updateSliders(this.id, this.value)" onchange="updateSliders(this.id, this.value)"
+                    <input type="range" id="cG" step="5" value=0  data-highlight="true" min="0" max="255"
                     />
                 </div>
                 <div data-role="fieldcontain" id="cBSlide">
                     <label for="cB-range">BLUE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
-                    <input type="range" id="cB" step="5" value=0  data-highlight="true"  min="0" max="255"  oninput="updateSliders(this.id, this.value)" onchange="updateSliders(this.id, this.value)"
+                    <input type="range" id="cB" step="5" value=0  data-highlight="true"  min="0" max="255"  
                     />
                 </div>
-
-
-
-
-
-
-
-
-
-
-
-
-            </div>
-      
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -462,19 +581,23 @@ function GetData()
 <p>
 <textarea name="url" cols="50"></textarea>
 </p>
+
 <p>
 <input type="button" name=sendButton value="Send" onClick="sendText();">
 <input type="button" name=clearButton value="Clear" onClick="clearText();">
-<input type="button" name=disconnectButton value="Disconnect" onClick="doDisconnect();">
-<input type="button" name=connectButton value="Connect" onClick="doConnect();">
-<input type="button" name=DataButton value="GetData" onClick="GetData();">
-<input type="button" name=RefreshButton value="viewAllData" onClick="viewAllData();">
+
 
 </p>
 
 
 </form>
-  </div>
+
+
+</div>
+
+
+
+
 
 
      

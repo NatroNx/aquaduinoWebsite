@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+
+<meta charset="utf-8" />
+
+<title>WebSocket Test</title>
+
+<script language="javascript" type="text/javascript">
+
+
+  function init()
+  {
+	document.myform.url.value = "wss://pi.grojer.co.at/ws/"
+	//document.myform.url.value = "ws://10.0.0.200:9000"
+	document.myform.inputtext.value = "toMega|tV_0|cI_0|mO_0|mM_0|cP_11.1|cR_22.2|cG_33.3|cB_44.4|p1_1|p2_1|lV_0|l1_0|l2_0|cO_0|hV_1|d1_0|d2_0|d3_0|cV_0|"
+	document.myform.disconnectButton.disabled = true;
+	doConnect();
+  }
+
+  function doConnect()
+  {
+    websocket = new WebSocket(document.myform.url.value, ['arduino']);
+    websocket.onopen = function(evt) { onOpen(evt) };
+    websocket.onclose = function(evt) { onClose(evt) };
+    websocket.onmessage = function(evt) { onMessage(evt) };
+    websocket.onerror = function(evt) { onError(evt) };
+  }
+
+  function onOpen(evt)
+  {
+    writeToScreen("connected\n");
+	document.myform.connectButton.disabled = true;
+	document.myform.disconnectButton.disabled = false;
+  }
+
+  function onClose(evt)
+  {  writeToScreen("disconnected - reconnecting in 1 second \n");
+    setTimeout(doConnect, 1000)
+
+  }
+
+  function onMessage(evt)
+  {
+    writeToScreen("response: " + evt.data + '\n');
+    var testString = evt.data;
+    document.getElementById("foo").innerHTML = testString ;
+
+  }
+
+  function onError(evt)
+  {
+    writeToScreen('error: ' + evt.data + '\n');
+
+	websocket.close();
+
+	document.myform.connectButton.disabled = false;
+	document.myform.disconnectButton.disabled = true;
+
+  }
+
+  function doSend(message)
+  {
+    writeToScreen("sent: " + message + '\n'); 
+    websocket.send(message);
+  }
+  
+    function viewAllData()
+  {
+   doSend("viewAllData");
+  }
+  
+function GetData()
+  {
+   doSend("GetData");
+  }
+  
+  
+
+  function writeToScreen(message)
+  {
+    document.myform.outputtext.value += message
+	document.myform.outputtext.scrollTop = document.myform.outputtext.scrollHeight;
+
+  }
+
+  window.addEventListener("load", init, false);
+
+
+   function sendText() {
+		doSend( document.myform.inputtext.value );
+   }
+
+  function clearText() {
+		document.myform.outputtext.value = "";
+   }
+
+   function doDisconnect() {
+		websocket.close();
+   }
+
+
+</script>
+
+<div id="output"></div>
+
+<form name="myform">
+<p>
+<textarea name="outputtext" rows="30" cols="70"></textarea>
+</p>
+<p>
+<textarea name="inputtext" rows="5" cols="70"></textarea>
+</p>
+<p>
+<textarea name="url" cols="50"></textarea>
+</p>
+<p>
+<input type="button" name=sendButton value="Send" onClick="sendText();">
+<input type="button" name=clearButton value="Clear" onClick="clearText();">
+<input type="button" name=disconnectButton value="Disconnect" onClick="doDisconnect();">
+<input type="button" name=connectButton value="Connect" onClick="doConnect();">
+<input type="button" name=DataButton value="GetData" onClick="GetData();">
+<input type="button" name=RefreshButton value="viewAllData" onClick="viewAllData();">
+
+</p>
+<span id="textString">some value</span>
+
+
+</form>
+</html> 
+
+
